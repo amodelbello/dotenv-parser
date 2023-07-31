@@ -30,24 +30,30 @@
 
 ;;; Code:
 
-(defvar rx-item-pattern
-  (rx (: (| line-start line-start)
-         (* space)
-         (? (: "export" (+ space)))
-         (group (+ (in alnum "_" "-")))
-         (| (: (* space) "=" (*? space))
-            (: ":" (+? space)))
-         (? (group (| (: (* space) "'" (* (| (: (syntax escape) "'") (not "'"))) "'")
-                      (: (* space) "`" (* (| (: (syntax escape) "`'") (not "`"))) "`")
-                      (: (* space)
-                         (syntax string-quote)
-                         (* (| (: (syntax escape) (syntax string-quote))
-                               (not (syntax string-quote))))
-                         (syntax string-quote))
-                      (: (not "#") (+ nonl))
-                      (* space)
-                      (? (: "#" (* nonl)))
-                      (| line-end line-end)))))))
+(defun dotenv-get-lines (str)
+  "Get all of the valid lines from STR.
+Returns a list of matches in `(full line, key, value)` form.
+Returns nil if no matches."
+  (s-match-strings-all
+   (rx (: (| line-start line-start)
+          (* space)
+          (? (: "export" (+ space)))
+          (group (+ (in alnum "_" "-")))
+          (| (: (* space) "=" (*? space))
+             (: ":" (+? space)))
+          (? (group (| (: (* space) "'" (* (| (: (syntax escape) "'") (not "'"))) "'")
+                       (: (* space) "`" (* (| (: (syntax escape) "`") (not "`"))) "`")
+                       (: (* space)
+                          (syntax string-quote)
+                          (* (| (: (syntax escape) (syntax string-quote))
+                                (not (syntax string-quote))))
+                          (syntax string-quote))
+                       (: (not "#") (+ nonl))
+                       (* space)
+                       (? (: "#" (* nonl)))
+                       (| line-end line-end))))
+          ))
+   str))
 
 (defun alist->hash-table (alist)
   "Convert ALIST to a hash-table."
@@ -72,8 +78,7 @@ The value for OUTPUT-TYPE can be ‘hash-table’, ‘alist’ or ‘plist’.  
 defaults to ‘hash-table’."
   (interactive)
   (let* ((output-type (or output-type "hash-table"))
-         (item-pattern "\\(?:^\\|^\\)[[:space:]]*\\(?:export[[:space:]]+\\)?\\([[:alnum:]_.-]+\\)\\(?:[[:space:]]*=[[:space:]]*?\\|:[[:space:]]+?\\)\\([[:space:]]*'\\(?:\\'\\|[^']\\)*'\\|[[:space:]]*\\\"\\(?:\\\"\\|[^\\\"]\\)*\\\"\\|[[:space:]]*`\\(?:\\`\\|[^`]\\)*`\\|[^#\n]+\\)?[[:space:]]*\\(?:#.*\\)?\\(?:$\\|$\\)")
-         (lines (s-match-strings-all rx-item-pattern dotenv-str))
+         (lines (dotenv-get-lines dotenv-str))
          (output))
     (dolist (item lines output)
       (let ((key (intern (nth 1 item)))
