@@ -30,6 +30,24 @@
 
 ;;; Code:
 
+(defvar rx-item-pattern
+  (rx (: (: (| line-start line-start)
+            (* space)
+            (? (: "export" (+ space)))
+            (group (+ (in alnum "_" "-")))
+            (| (: (* space) "=" (*? space))
+               (: ":" (+? space)))
+            (? (group (| (: (* space) "'" (* (| (: (syntax escape) "'") (not "'"))) "'")
+                         (: (* space) "`" (* (| (: (syntax escape) "`'") (not "`"))) "`")
+                         (: (* space)
+                            (syntax string-quote)
+                            (* (| (: (syntax escape) (syntax string-quote))
+                                  (not (syntax string-quote))))
+                            (syntax string-quote))
+                         (: (not "#") (+ nonl))
+                         (* space)
+                         (? (: "#" (* nonl)))
+                         (| line-end line-end))))))))
 
 (defun alist->hash-table (alist)
   "Convert ALIST to a hash-table."
@@ -55,7 +73,7 @@ defaults to ‘hash-table’."
   (interactive)
   (let* ((output-type (or output-type "hash-table"))
          (item-pattern "\\(?:^\\|^\\)[[:space:]]*\\(?:export[[:space:]]+\\)?\\([[:alnum:]_.-]+\\)\\(?:[[:space:]]*=[[:space:]]*?\\|:[[:space:]]+?\\)\\([[:space:]]*'\\(?:\\'\\|[^']\\)*'\\|[[:space:]]*\\\"\\(?:\\\"\\|[^\\\"]\\)*\\\"\\|[[:space:]]*`\\(?:\\`\\|[^`]\\)*`\\|[^#\n]+\\)?[[:space:]]*\\(?:#.*\\)?\\(?:$\\|$\\)")
-         (lines (s-match-strings-all item-pattern dotenv-str))
+         (lines (s-match-strings-all rx-item-pattern dotenv-str))
          (output))
     (dolist (item lines output)
       (let ((key (intern (nth 1 item)))
