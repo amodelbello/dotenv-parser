@@ -51,8 +51,7 @@ Returns nil if no matches."
                        (: (not "#") (+ nonl))
                        (* space)
                        (? (: "#" (* nonl)))
-                       (| line-end line-end))))
-          ))
+                       (| line-end line-end))))))
    str))
 
 (defun alist->hash-table (alist)
