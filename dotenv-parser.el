@@ -48,7 +48,7 @@ Returns nil if no matches."
                           (* (| (: (syntax escape) (syntax string-quote))
                                 (not (syntax string-quote))))
                           (syntax string-quote))
-                       (: (not "#") (+ nonl))
+                       (+ (not (in "#" "\n")))
                        (* space)
                        (? (: "#" (* nonl)))
                        (| line-end line-end))))))
