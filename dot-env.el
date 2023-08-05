@@ -30,6 +30,18 @@
 
 ;;; Code:
 
+(defvar dot-env-filepath (format "%s%s" user-emacs-directory ".env")
+  "The path to the .env file.")
+
+(defvar dot-env-environment '()
+  "The alist that stores .env variables.")
+
+(defun dot-env-get-file-contents (filename)
+  "Return the contents of FILENAME."
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (buffer-string)))
+
 (defun dot-env-get-lines (str)
   "Get all of the valid lines from STR.
 Returns a list of matches in `((full line, key, value) ...)` form.
@@ -54,7 +66,7 @@ Returns nil if no matches."
                        (| line-end line-end))))))
    str))
 
-(defun dot-env-parse-string (dotenv-str)
+(defun dot-env-parse (dotenv-str)
   "Parse the DOTENV-STR."
   (interactive)
   (let* ((lines (dot-env-get-lines dotenv-str))
@@ -71,6 +83,14 @@ Returns nil if no matches."
                        (cons (append (list key value))
                              output)))))
     (setq output (nreverse output))))
+
+(defun dot-env-config ()
+  "Load the values from .env file."
+  (interactive)
+  (let ((environment (dot-env-parse (dot-env-get-file-contents dot-env-filepath))))
+    (setq dot-env-environment environment)
+    environment))
+
 
 (provide 'dot-env-parser)
 
