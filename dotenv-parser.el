@@ -32,7 +32,7 @@
 
 (defun dotenv-get-lines (str)
   "Get all of the valid lines from STR.
-Returns a list of matches in `(full line, key, value)` form.
+Returns a list of matches in `((full line, key, value) ...)` form.
 Returns nil if no matches."
   (s-match-strings-all
    (rx (: (| line-start line-start)
@@ -54,45 +54,23 @@ Returns nil if no matches."
                        (| line-end line-end))))))
    str))
 
-(defun alist->hash-table (alist)
-  "Convert ALIST to a hash-table."
-  (let ((hash-table (make-hash-table :test 'equal)))
-    (dolist (item alist)
-      (puthash (car item) (nth 1 item) hash-table))
-    hash-table))
-
-(defun alist->plist (alist)
-  "Convert ALIST to a plist."
-  (let (value)
-    (dolist (item alist value)
-      (setq value (plist-put value (car item) (cadr item))))))
-
-(defun dotenv-parse-string (dotenv-str &optional output-type)
-  "Parse the DOTENV-STR into a Lisp OUTPUT-TYPE.
-The returned output will be a hashtable, an alist, or a plist.
-If there are duplicate keys in the DOTENV-STR, all but the last one are
-ignored.
-
-The value for OUTPUT-TYPE can be ‘hash-table’, ‘alist’ or ‘plist’.  It
-defaults to ‘hash-table’."
+(defun dotenv-parse-string (dotenv-str)
+  "Parse the DOTENV-STR."
   (interactive)
-  (let* ((output-type (or output-type "hash-table"))
-         (lines (dotenv-get-lines dotenv-str))
+  (let* ((lines (dotenv-get-lines dotenv-str))
          (output))
     (dolist (item lines output)
-      (let ((key (intern (nth 1 item)))
-            (value (string-trim (or (nth 2 item) ""))))
+      (let* ((key (intern (nth 1 item)))
+             (value (replace-regexp-in-string                   ; remove outside quotes
+                     "^\\(['\"`]\\)\\([[:ascii:]\\|[:nonascii:]]*\\)\\1"
+                     "\\2"
+                     (string-trim (or (nth 2 item) "")))))      ; trim whitespace
         (setq output (if (assoc key output)
                          (cons (list key value)
                                (assq-delete-all key output))
                        (cons (append (list key value))
                              output)))))
-    (setq output (nreverse output))
-    (cond ((string= output-type "alist") output)
-          ((string= output-type "plist") (alist->plist output))
-          ((string= output-type "hash-table") (alist->hash-table output))
-          (t (error (format "Unknown output-type: %s. Must be one of 'hash-table', 'alist', or 'plist'." output-type))))
-    ))
+    (setq output (nreverse output))))
 
 (provide 'dotenv-parser)
 
