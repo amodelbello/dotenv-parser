@@ -30,7 +30,7 @@
 
 ;;; Code:
 
-(defun dotenv-get-lines (str)
+(defun dot-env-get-lines (str)
   "Get all of the valid lines from STR.
 Returns a list of matches in `((full line, key, value) ...)` form.
 Returns nil if no matches."
@@ -54,10 +54,10 @@ Returns nil if no matches."
                        (| line-end line-end))))))
    str))
 
-(defun dotenv-parse-string (dotenv-str)
+(defun dot-env-parse-string (dotenv-str)
   "Parse the DOTENV-STR."
   (interactive)
-  (let* ((lines (dotenv-get-lines dotenv-str))
+  (let* ((lines (dot-env-get-lines dotenv-str))
          (output))
     (dolist (item lines output)
       (let* ((key (intern (nth 1 item)))
@@ -72,6 +72,6 @@ Returns nil if no matches."
                              output)))))
     (setq output (nreverse output))))
 
-(provide 'dotenv-parser)
+(provide 'dot-env-parser)
 
-;;; dotenv-parser.el ends here
+;;; dot-env.el ends here
