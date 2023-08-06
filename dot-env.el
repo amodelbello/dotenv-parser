@@ -66,17 +66,22 @@ Returns nil if no matches."
                        (| line-end line-end))))))
    str))
 
+(defun dot-env-clense-value (raw-value)
+  "Remove containing quotes and trim whitespace in RAW-VALUE."
+  (replace-regexp-in-string                                     ; remove outside quotes
+   "^\\(['\"`]\\)\\([[:ascii:]\\|[:nonascii:]]*\\)\\1"
+   "\\2"
+   (string-trim (or raw-value ""))))                            ; trim whitespace
+
+
 (defun dot-env-parse (dotenv-str)
   "Parse the DOTENV-STR."
   (interactive)
-  (let* ((lines (dot-env-get-lines dotenv-str))
-         (output))
+  (let ((lines (dot-env-get-lines dotenv-str))
+        (output))
     (dolist (item lines output)
-      (let* ((key (intern (nth 1 item)))
-             (value (replace-regexp-in-string                   ; remove outside quotes
-                     "^\\(['\"`]\\)\\([[:ascii:]\\|[:nonascii:]]*\\)\\1"
-                     "\\2"
-                     (string-trim (or (nth 2 item) "")))))      ; trim whitespace
+      (let ((key (intern (nth 1 item)))
+            (value (dot-env-clense-value (nth 2 item))))
         (setq output (if (assoc key output)
                          (cons (list key value)
                                (assq-delete-all key output))
@@ -91,7 +96,28 @@ Returns nil if no matches."
     (setq dot-env-environment environment)
     environment))
 
+(defun dot-env-populate (alist &optional override)
+  "Load the values from ALIST into `dot-env-environment'.
+If OVERRIDE is non-nil, override existing values.
+ALIST should be in the form of '((symbol string))
+Populates dot-env-environment and returns it."
+  (interactive)
+  (setq dot-env-environment
+        (let ((override (or override nil))
+              (output dot-env-environment))
+          (dolist (item alist output)
+            (let ((key (nth 0 item))
+                  (value (dot-env-clense-value (nth 1 item))))
+              (setq output (if (assoc key output)
+                               (if (not (null override))
+                                   (cons (list key value)
+                                         (assq-delete-all key output))
+                                 output)
+                             (cons (append (list key value))
+                                   output))))
+            output))))
 
-(provide 'dot-env-parser)
+
+(provide 'dot-env)
 
 ;;; dot-env.el ends here
