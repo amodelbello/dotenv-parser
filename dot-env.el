@@ -112,24 +112,25 @@ Populates dot-env-environment and returns it."
   (setq dot-env-environment
         (let ((override (or override nil))
               (debug (or debug nil))
-              (output dot-env-environment))
-          (dolist (item alist output)
+              (environment dot-env-environment))
+          (dolist (item alist environment)
             (let ((key (nth 0 item))
-                  (value (dot-env-clense-value (nth 1 item))))
-              (setq output (if (assoc key output)
-                               (if (not (null override))
-                                   (progn
-                                     (if debug
-                                         (message "%s is already defined and WAS overwritten" key))
-                                     (cons (list key value)
-                                           (assq-delete-all key output)))
-                                 (progn
-                                   (if debug
-                                       (message "%s is already defined and was NOT overwritten" key))
-                                   output))
-                             (cons (append (list key value))
-                                   output))))
-            output))))
+                  (value (dot-env-cleanse-value (nth 1 item))))
+              (setq environment
+                    (if (assoc key environment)
+                        (if (not (null override))
+                            (progn
+                              (if debug
+                                  (message "%s is already defined and WAS overwritten" key))
+                              (cons (list key value)
+                                    (assq-delete-all key environment)))
+                          (progn
+                            (if debug
+                                (message "%s is already defined and was NOT overwritten" key))
+                            environment))
+                      (cons (append (list key value))
+                            environment))))
+            environment))))
 
 (defun dot-env-get (field &optional default)
   "Get the value of FIELD from dot-env-environment.
