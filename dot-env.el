@@ -78,7 +78,7 @@ Returns nil if no matches."
 
 
 (defun dot-env-parse (dotenv-str)
-  "Parse DOTENV-STR and return the result."
+  "Parse DOTENV-STR into an association list and return the result."
   (interactive)
   (let ((lines (dot-env-get-lines dotenv-str))
         (output))
@@ -104,8 +104,9 @@ PATH defaults to `user-emacs-directory'/.env."
     (error (message "Failed to configure dotenv environment: %s" err))))
 
 (defun dot-env-populate (alist &optional override debug)
-  "Load the values from ALIST into `dot-env-environment'.
+  "Load the values from the association list ALIST into `dot-env-environment'.
 If OVERRIDE is non-nil, override existing values.
+If debug is non-nil, print log messages.
 ALIST should be in the form of '((symbol string))
 Populates dot-env-environment and returns it."
   (interactive)
