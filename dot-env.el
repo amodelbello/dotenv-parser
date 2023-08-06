@@ -1,4 +1,4 @@
-;;; dotenv-parser.el --- Parse a dotenv file -*- lexical-binding: t -*-
+;;; dot-env.el --- Dotenv functionality for emacs -*- lexical-binding: t -*-
 
 ;; Author: Amo DelBello
 ;; Maintainer: Amo DelBello
@@ -31,10 +31,10 @@
 ;;; Code:
 
 (defvar dot-env-filepath (format "%s%s" user-emacs-directory ".env")
-  "The path to the .env file.")
+  "Path to the .env file.")
 
 (defvar dot-env-environment '()
-  "The alist that stores .env variables.")
+  "An alist that stores .env variables.")
 
 (defun dot-env-get-file-contents (filename)
   "Return the contents of FILENAME."
