@@ -30,6 +30,8 @@
 
 ;;; Code:
 
+(require 's)
+
 (defvar dot-env-filepath (format "%s%s" user-emacs-directory ".env")
   "Path to the .env file.")
 
