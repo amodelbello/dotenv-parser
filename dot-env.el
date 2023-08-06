@@ -4,7 +4,7 @@
 ;; Maintainer: Amo DelBello
 ;; Version: 1.0.0
 ;; Package-Requires: ((s "1.13.0"))
-;; Homepage: homepage
+;; Homepage: https://github.com/amodelbello/dot-env.el
 ;; Keywords: convenience, dotenv, environment, configuration
 
 
@@ -77,7 +77,7 @@ Returns nil if no matches."
 
 
 (defun dot-env-parse (dotenv-str)
-  "Parse the DOTENV-STR."
+  "Parse DOTENV-STR."
   (interactive)
   (let ((lines (dot-env-get-lines dotenv-str))
         (output))
@@ -92,7 +92,7 @@ Returns nil if no matches."
     (setq output (nreverse output))))
 
 (defun dot-env-config (&optional path)
-  "Load the values from .env file from PATH.
+  "Load the values from file located at PATH and return them.
 PATH defaults to `user-emacs-directory'/.env."
   (interactive)
   (let* ((path (or path dot-env-filepath))
