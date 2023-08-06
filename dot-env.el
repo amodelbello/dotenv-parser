@@ -119,6 +119,12 @@ Populates dot-env-environment and returns it."
                                    output))))
             output))))
 
+(defun dot-env-get (field &optional default)
+  "Get the value of FIELD from dot-env-environment.
+Use DEFAULT if no value is found."
+  (or
+   (car (cdr (assoc field dot-env-environment)))
+   default))
 
 (provide 'dot-env)
 
