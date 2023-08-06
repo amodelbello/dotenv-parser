@@ -3,7 +3,7 @@
 ;; Author: Amo DelBello
 ;; Maintainer: Amo DelBello
 ;; Version: 1.0.0
-;; Package-Requires: (dependencies)
+;; Package-Requires: ((s "1.13.0"))
 ;; Homepage: homepage
 ;; Keywords: convenience, dotenv, environment, configuration
 
