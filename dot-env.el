@@ -89,10 +89,12 @@ Returns nil if no matches."
                              output)))))
     (setq output (nreverse output))))
 
-(defun dot-env-config ()
-  "Load the values from .env file."
+(defun dot-env-config (&optional path)
+  "Load the values from .env file from PATH.
+PATH defaults to `user-emacs-directory'/.env."
   (interactive)
-  (let ((environment (dot-env-parse (dot-env-get-file-contents dot-env-filepath))))
+  (let* ((path (or path dot-env-filepath))
+         (environment (dot-env-parse (dot-env-get-file-contents path))))
     (setq dot-env-environment environment)
     environment))
 
