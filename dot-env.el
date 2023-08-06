@@ -78,7 +78,7 @@ Returns nil if no matches."
 
 
 (defun dot-env-parse (dotenv-str)
-  "Parse DOTENV-STR."
+  "Parse DOTENV-STR and return the result."
   (interactive)
   (let ((lines (dot-env-get-lines dotenv-str))
         (output))
@@ -103,7 +103,7 @@ PATH defaults to `user-emacs-directory'/.env."
         environment)
     (error (message "Failed to configure dotenv environment: %s" err))))
 
-(defun dot-env-populate (alist &optional override)
+(defun dot-env-populate (alist &optional override debug)
   "Load the values from ALIST into `dot-env-environment'.
 If OVERRIDE is non-nil, override existing values.
 ALIST should be in the form of '((symbol string))
@@ -111,15 +111,22 @@ Populates dot-env-environment and returns it."
   (interactive)
   (setq dot-env-environment
         (let ((override (or override nil))
+              (debug (or debug nil))
               (output dot-env-environment))
           (dolist (item alist output)
             (let ((key (nth 0 item))
                   (value (dot-env-clense-value (nth 1 item))))
               (setq output (if (assoc key output)
                                (if (not (null override))
-                                   (cons (list key value)
-                                         (assq-delete-all key output))
-                                 output)
+                                   (progn
+                                     (if debug
+                                         (message "%s is already defined and WAS overwritten" key))
+                                     (cons (list key value)
+                                           (assq-delete-all key output)))
+                                 (progn
+                                   (if debug
+                                       (message "%s is already defined and was NOT overwritten" key))
+                                   output))
                              (cons (append (list key value))
                                    output))))
             output))))
