@@ -69,12 +69,12 @@ Returns nil if no matches."
                  (| line-end line-end))))))
    str))
 
-(defun dot-env-clense-value (raw-value)
+(defun dot-env-cleanse-value (raw-value)
   "Remove containing quotes and trim whitespace in RAW-VALUE."
-  (replace-regexp-in-string                                     ; remove outside quotes
+  (replace-regexp-in-string
    "^\\(['\"`]\\)\\([[:ascii:]\\|[:nonascii:]]*\\)\\1"
    "\\2"
-   (string-trim (or raw-value ""))))                            ; trim whitespace
+   (string-trim (or raw-value ""))))
 
 
 (defun dot-env-parse (dotenv-str)
@@ -84,7 +84,7 @@ Returns nil if no matches."
         (output))
     (dolist (item lines output)
       (let ((key (intern (nth 1 item)))
-            (value (dot-env-clense-value (nth 2 item))))
+            (value (dot-env-cleanse-value (nth 2 item))))
         (setq output (if (assoc key output)
                          (cons (list key value)
                                (assq-delete-all key output))
