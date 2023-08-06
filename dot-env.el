@@ -93,13 +93,15 @@ Returns nil if no matches."
     (setq output (nreverse output))))
 
 (defun dot-env-config (&optional path)
-  "Load the values from file located at PATH and return them.
+  "Load the values from file located at PATH and return them or an error.
 PATH defaults to `user-emacs-directory'/.env."
   (interactive)
-  (let* ((path (or path dot-env-filepath))
-         (environment (dot-env-parse (dot-env-get-file-contents path))))
-    (setq dot-env-environment environment)
-    environment))
+  (condition-case err
+      (let* ((path (or path dot-env-filepath))
+             (environment (dot-env-parse (dot-env-get-file-contents path))))
+        (setq dot-env-environment environment)
+        environment)
+    (error (message "Failed to configure dotenv environment: %s" err))))
 
 (defun dot-env-populate (alist &optional override)
   "Load the values from ALIST into `dot-env-environment'.
