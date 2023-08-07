@@ -6,7 +6,7 @@ allowing you to specify values for config items that are likely to change across
 
 Examples of such config items are font sizes, paths to executables such as `ispell`, and authentication tokens.
 
-## Usage
+## Available Functions
 dot-env.el implements 3 of the 4 public methods available in the original dotenv.js:
 
 ```elisp
@@ -32,7 +32,7 @@ dot-env.el implements 3 of the 4 public methods available in the original dotenv
 An additional convenience function is available to easily get a dotenv value:
 
 ```elisp
-(defun dot-env-get (field &optional default))
+(dot-env-get (field &optional default))
 ;; Get the value of FIELD from dot-env-environment.
 ;; Use DEFAULT if no value is found.
 ```
@@ -58,5 +58,11 @@ If no value had been specified in the .env file, `DejaVu Sans Mono-13` would hav
 * It's easiest just to use the default name and location for the .env file - `.env` in your `.emacs.d` directory.
 * You should add the name/path of your .env file to your `.gitignore` file.
 
-## Disclaimer
-...
+## Additional Information
+* This package implements 3 of the 4 public methods within dotenv.js - `config()`, `parse()`, and `populate()`.
+* `decrypt()` and all `.env.vault` functionality has been left out.
+* The parsing logic is identical with the original but there are some minor differences in function signatures and functionality due to the differences between node.js and Emacs environments:
+    1. The option to specify the file encoding of the .env file has been left out because Emacs handles this automatically.
+    1. The option to specify an arbitrary `target` argument to the `populate()` method has been left out. Due to the convention of enabling lexical binding in elisp code, there is no way to pass a variable by reference. The ablity to populate a target which is passed into the function, as it exists in the original library, isn't possible in elisp code.
+    1. The `(dot-env-config)` function does not take a debug option as the error that triggers the message that the debug option would've enabled prints to the message buffer automatically.
+    1. The `debug` option has been left out of `(dot-env-parse)` because, while the option exists in the original library's documentation, it isn't actually used anywhere in the `parse()` method code.
