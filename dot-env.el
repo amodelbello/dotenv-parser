@@ -38,7 +38,12 @@
 (defvar dot-env-environment '()
   "An alist that stores .env variables.")
 
-(defun dot-env-get-file-contents (filename)
+(defvar dot-env-file-is-encrypted nil
+  "If non-nil, don't store dotenv values in `dot-env-environment'.
+Rather, parse the source file for each variable read. This is useful
+if you are reading from an encrypted file and don't want to store values
+as plain text in the Emacs environment.")
+
 (defun dot-env--get-file-contents (filename)
   "Return the contents of FILENAME."
   (with-temp-buffer
@@ -100,7 +105,9 @@ PATH defaults to `user-emacs-directory'/.env."
   (condition-case err
       (let* ((path (or path dot-env-filepath))
              (environment (dot-env-parse (dot-env--get-file-contents path))))
-        (setq dot-env-environment environment)
+        (if dot-env-file-is-encrypted
+            (setq dot-env-environment "encrypted data, not stored in envrionment")
+          (setq dot-env-environment environment))
         environment)
     (error (message "Failed to configure dotenv environment: %s" err))))
 
@@ -138,9 +145,12 @@ Populates dot-env-environment and returns it."
   "Get the value of FIELD from dot-env-environment.
 Use DEFAULT if no value is found."
   (interactive)
-  (or
-   (car (cdr (assoc field dot-env-environment)))
-   default))
+  (let ((environment (if dot-env-file-is-encrypted
+                         (dot-env-config)
+                       dot-env-environment)))
+    (or
+     (car (cdr (assoc field environment)))
+     default)))
 
 (provide 'dot-env)
 
