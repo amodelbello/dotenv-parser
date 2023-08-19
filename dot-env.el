@@ -39,12 +39,13 @@
   "An alist that stores .env variables.")
 
 (defun dot-env-get-file-contents (filename)
+(defun dot-env--get-file-contents (filename)
   "Return the contents of FILENAME."
   (with-temp-buffer
     (insert-file-contents filename)
     (buffer-string)))
 
-(defun dot-env-get-lines (str)
+(defun dot-env--get-lines (str)
   "Get all of the valid lines from STR.
 Returns a list of matches in `((full line, key, value) ...)` form.
 Returns nil if no matches."
@@ -69,7 +70,7 @@ Returns nil if no matches."
                  (| line-end line-end))))))
    str))
 
-(defun dot-env-cleanse-value (raw-value)
+(defun dot-env--cleanse-value (raw-value)
   "Remove containing quotes and trim whitespace in RAW-VALUE."
   (replace-regexp-in-string
    "^\\(['\"`]\\)\\([[:ascii:]\\|[:nonascii:]]*\\)\\1"
@@ -80,11 +81,11 @@ Returns nil if no matches."
 (defun dot-env-parse (dotenv-str)
   "Parse DOTENV-STR into an association list and return the result."
   (interactive)
-  (let ((lines (dot-env-get-lines dotenv-str))
+  (let ((lines (dot-env--get-lines dotenv-str))
         (output))
     (dolist (item lines output)
       (let ((key (intern (nth 1 item)))
-            (value (dot-env-cleanse-value (nth 2 item))))
+            (value (dot-env--cleanse-value (nth 2 item))))
         (setq output (if (assoc key output)
                          (cons (list key value)
                                (assq-delete-all key output))
@@ -98,7 +99,7 @@ PATH defaults to `user-emacs-directory'/.env."
   (interactive)
   (condition-case err
       (let* ((path (or path dot-env-filepath))
-             (environment (dot-env-parse (dot-env-get-file-contents path))))
+             (environment (dot-env-parse (dot-env--get-file-contents path))))
         (setq dot-env-environment environment)
         environment)
     (error (message "Failed to configure dotenv environment: %s" err))))
@@ -116,7 +117,7 @@ Populates dot-env-environment and returns it."
               (environment dot-env-environment))
           (dolist (item alist environment)
             (let ((key (nth 0 item))
-                  (value (dot-env-cleanse-value (nth 1 item))))
+                  (value (dot-env--cleanse-value (nth 1 item))))
               (setq environment
                     (if (assoc key environment)
                         (if (not (null override))
