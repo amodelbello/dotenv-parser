@@ -107,7 +107,7 @@ PATH defaults to `user-emacs-directory'/.env."
 (defun dot-env-populate (alist &optional override debug)
   "Load the values from the association list ALIST into `dot-env-environment'.
 If OVERRIDE is non-nil, override existing values.
-If debug is non-nil, print log messages.
+If DEBUG is non-nil, print log messages.
 ALIST should be in the form of '((symbol string))
 Populates dot-env-environment and returns it."
   (interactive)
