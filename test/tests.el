@@ -175,7 +175,7 @@ four" (dot-env-get 'FOUR)))
 
   (should (string-equal "test-val" (dot-env-get 'TEST_VAL)))
   (should (string-equal "test-val2" (dot-env-get 'TEST_VAL2)))
-  (should (string-equal "encrypted data, not stored in envrionment" dot-env-environment))
+  (should (string-equal "encrypted data, not stored in environment" dot-env-environment))
 
   ;; reload real config
   (setq dot-env-filepath old-env-filepath)

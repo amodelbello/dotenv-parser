@@ -26,7 +26,7 @@
 
 ;;; Commentary:
 
-;; dot-env is a package that repoduces the functionality in
+;; dot-env is a package that reproduces the functionality in
 ;; https://github.com/motdotla/dotenv/tree/master and allows the use of
 ;; environment variables stored in a .env file, similar to a technique used
 ;; in the node.js ecosystem.
@@ -34,7 +34,7 @@
 ;; VARIABLES:
 ;; dot-env-filepath            : Path to .env file (defaults to .emacs.d/.env)
 ;; dot-env-environment         : alist that stores environment variables
-;; dot-env-file-is-encrypted   : non-nill prevents values being stored in Emacs environment
+;; dot-env-file-is-encrypted   : non-nil prevents values being stored in Emacs environment
 
 ;; COMMANDS:
 ;; dot-env-config    : Loads the .env file into dot-env-environment
@@ -123,7 +123,7 @@ PATH defaults to `user-emacs-directory'/.env."
       (let* ((path (or path dot-env-filepath))
              (environment (dot-env-parse (dot-env--get-file-contents path))))
         (if dot-env-file-is-encrypted
-            (setq dot-env-environment "encrypted data, not stored in envrionment")
+            (setq dot-env-environment "encrypted data, not stored in environment")
           (setq dot-env-environment environment))
         environment)
     (error (message "Failed to configure dotenv environment: %s" err))))
@@ -144,16 +144,15 @@ Populates dot-env-environment and returns it."
                   (value (dot-env--cleanse-value (nth 1 item))))
               (setq environment
                     (if (assoc key environment)
-                        (if (not (null override))
+                        (if override
                             (progn
                               (if debug
                                   (message "%s is already defined and WAS overwritten" key))
                               (cons (list key value)
                                     (assq-delete-all key environment)))
-                          (progn
-                            (if debug
-                                (message "%s is already defined and was NOT overwritten" key))
-                            environment))
+                          (if debug
+                              (message "%s is already defined and was NOT overwritten" key))
+                          environment)
                       (cons (append (list key value))
                             environment))))
             environment))))
