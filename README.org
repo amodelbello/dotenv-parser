@@ -1,7 +1,7 @@
 * dot-env.el
 
 dot-env.el makes it easy to keep track of emacs configuration variables across multiple environments and machines.
-It aims to mimic the functionality found in https://github.com/motdotla/dotenv,
+It aims to reproduce the functionality found in https://github.com/motdotla/dotenv,
 allowing you to specify values for config items that are likely to change across machines.
 
 Examples of such config items are font sizes, paths to executables such as `ispell`, and authentication tokens.
@@ -48,8 +48,8 @@ An additional convenience function is available to easily get a dotenv value:
 #+end_src
 
 ** Example Usage
-*** non-default .env file location
-If you wish to load your environment from a file other than the default (=~=/.emacs.d/.env) you can set the ~dot-env-filepath~ variable:
+*** Non-default .env file location
+If you wish to load your environment from a file other than the default (.emacs.d/.env) you can set the ~dot-env-filepath~ variable:
 #+begin_src emacs-lisp
 (setq dot-env-filepath "path to your file")
 (dot-env-config)
@@ -67,7 +67,7 @@ If you have [[https://www.gnu.org/software/emacs/manual/html_node/epa/index.html
 #+end_src
 Note: this will incur a minor performance hit as the file will need to be fully parsed each time a variable is accessed. As parsing typically only takes place once during initialization, this should not be an issue unless the parsed file is extremely large.
 
-*** setting font
+*** Setting font
 Value in .env file
 #+begin_src emacs-lisp
 FONT="DejaVu Sans Mono-11"
@@ -82,16 +82,16 @@ Emacs config
 (set-frame-font (dot-env-get "FONT" "DejaVu Sans Mono-13") nil t)
 #+end_src
 
-The above code changes the font to `DejaVu Sans Mono-11`.
-If no value had been specified in the .env file, `DejaVu Sans Mono-13` would have been loaded instead.
+The above code changes the font to ~DejaVu Sans Mono-11~.
+If no value had been specified in the .env file, ~DejaVu Sans Mono-13~ would have been loaded instead.
 
 ** Tips
-- It's easiest just to use the default name and location for the .env file - `.env` in your `.emacs.d` directory.
-- You should add the name/path of your .env file to your `.gitignore` file.
+- It's easiest just to use the default name and location for the .env file - ~.env~ in your ~.emacs.d~ directory.
+- You should add the name/path of your .env file to your ~.gitignore~ file.
 
 ** Additional Information
-- The parsing logic is identical with the original but there are some minor differences in function signatures and functionality due to the differences between node.js and Emacs environments:
-  1. The option to specify the file encoding of the .env file has been left out because Emacs handles this automatically.
-  2. The option to specify an arbitrary `target` argument to the `populate()` method has been left out. Due to the convention of enabling lexical binding in elisp code, there is no way to pass a variable by reference. The ablity to populate a target which is passed into the function, as it exists in the original library, isn't possible in elisp code.
-  3. The `(dot-env-config)` function does not take a debug option as the error that triggers the message that the debug option would've enabled prints to the message buffer automatically.
-  4. The `debug` option has been left out of `(dot-env-parse)` because, while the option exists in the original library's documentation, it isn't actually used anywhere in the `parse()` method code.
+The parsing logic is identical with the original but there are some minor differences in function signatures and functionality due to the differences between node.js and Emacs environments:
+1. The option to specify the file encoding of the .env file has been left out because Emacs handles this automatically.
+2. The option to specify an arbitrary `target` argument to the `populate()` method has been left out. Due to the convention of enabling lexical binding in elisp code, there is no way to pass a variable by reference. The ablity to populate a target which is passed into the function, as it exists in the original library, isn't possible in elisp code.
+3. The `(dot-env-config)` function does not take a debug option as the error that triggers the message that the debug option would've enabled prints to the message buffer automatically.
+4. The `debug` option has been left out of `(dot-env-parse)` because, while the option exists in the original library's documentation, it isn't actually used anywhere in the `parse()` method code.
