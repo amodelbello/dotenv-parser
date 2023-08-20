@@ -1,9 +1,9 @@
-;;; dot-env.el --- Dotenv functionality for emacs -*- lexical-binding: t -*-
+;;; dot-env.el --- Dotenv functionality -*- lexical-binding: t -*-
 
 ;; Author: Amo DelBello
 ;; Maintainer: Amo DelBello
 ;; Version: 1.0.0
-;; Package-Requires: ((s "1.13.0"))
+;; Package-Requires: ((emacs "24.4") (s "1.13.0"))
 ;; Homepage: https://github.com/amodelbello/dot-env.el
 ;; Keywords: convenience, dotenv, environment, configuration
 
@@ -129,10 +129,10 @@ PATH defaults to `user-emacs-directory'/.env."
     (error (message "Failed to configure dotenv environment: %s" err))))
 
 (defun dot-env-populate (alist &optional override debug)
-  "Load the values from the association list ALIST into `dot-env-environment'.
+  "Load the values from the association list ALIST into dot-env-environment.
 If OVERRIDE is non-nil, override existing values.
 If DEBUG is non-nil, print log messages.
-ALIST should be in the form of '((symbol string))
+ALIST should be in the form of ((symbol string))
 Populates dot-env-environment and returns it."
   (interactive)
   (setq dot-env-environment
