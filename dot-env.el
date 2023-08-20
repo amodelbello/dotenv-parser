@@ -76,11 +76,11 @@ Returns nil if no matches."
    str))
 
 (defun dot-env--cleanse-value (raw-value)
-  "Remove containing quotes and trim whitespace in RAW-VALUE."
+  "Remove containing quotes, extra backslashes, and trim whitespace in RAW-VALUE."
   (replace-regexp-in-string
    "^\\(['\"`]\\)\\([[:ascii:]\\|[:nonascii:]]*\\)\\1"
    "\\2"
-   (string-trim (or raw-value ""))))
+   (replace-regexp-in-string "\\\\" "" (string-trim (or raw-value "")))))
 
 
 (defun dot-env-parse (dotenv-str)
