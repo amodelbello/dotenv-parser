@@ -79,7 +79,7 @@ Emacs config
 (dot-env-config)
 
 ;; somewhere in your emacs config
-(set-frame-font (dot-env-get "FONT" "DejaVu Sans Mono-13") nil t)
+(set-frame-font (dot-env-get 'FONT "DejaVu Sans Mono-13") nil t)
 #+end_src
 
 The above code changes the font to ~DejaVu Sans Mono-11~.
